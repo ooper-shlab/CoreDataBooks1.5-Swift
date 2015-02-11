@@ -114,7 +114,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     // Customize the number of rows in the table view.
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        let sectionInfo = self.fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
+        let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
         return sectionInfo.numberOfObjects
     }
     
@@ -122,14 +122,14 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     private func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
         
         // Configure the cell to show the book's title
-        let book = self.fetchedResultsController.objectAtIndexPath(indexPath) as Book
+        let book = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Book
         cell.textLabel?.text = book.title
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let CellIdentifier = "Cell"
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as UITableViewCell?
+        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as! UITableViewCell?
         
         // Configure the cell.
         configureCell(cell!, atIndexPath: indexPath)
@@ -148,7 +148,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             
             // Delete the managed object.
             let context = self.fetchedResultsController.managedObjectContext
-            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as NSManagedObject)
+            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
             
             var error: NSError?
             if !context.save(&error) {
@@ -230,10 +230,10 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
         switch type {
             
         case .Insert:
-            tableView.insertRowsAtIndexPaths([newIndexPath!] as NSArray, withRowAnimation: .Automatic)
+            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
             
         case .Delete:
-            tableView.deleteRowsAtIndexPaths([newIndexPath!] as NSArray, withRowAnimation: .Automatic)
+            tableView.deleteRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
             
         case .Update:
             configureCell(tableView.cellForRowAtIndexPath(indexPath!)!, atIndexPath: indexPath!)
@@ -277,25 +277,25 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             IMPORTANT: It's not necessary to use a second context for this. You could just use the existing context, which would simplify some of the code -- you wouldn't need to perform two saves, for example. This implementation, though, illustrates a pattern that may sometimes be useful (where you want to maintain a separate set of edits).
             */
             
-            let navController = segue.destinationViewController as UINavigationController
-            let addViewController = navController.topViewController as AddViewController
+            let navController = segue.destinationViewController as! UINavigationController
+            let addViewController = navController.topViewController as! AddViewController
             addViewController.delegate = self
             
             // Create a new managed object context for the new book; set its parent to the fetched results controller's context.
             let addingContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
             addingContext.parentContext = self.fetchedResultsController.managedObjectContext
             
-            let newBook = NSEntityDescription.insertNewObjectForEntityForName("Book", inManagedObjectContext: addingContext) as Book
+            let newBook = NSEntityDescription.insertNewObjectForEntityForName("Book", inManagedObjectContext: addingContext) as! Book
             addViewController.book = newBook
             addViewController.managedObjectContext = addingContext
             
         } else if segue.identifier == "ShowSelectedBook" {
             
             let indexPath = self.tableView.indexPathForSelectedRow()
-            let selectedBook = self.fetchedResultsController.objectAtIndexPath(indexPath!) as Book
+            let selectedBook = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Book
             
             // Pass the selected book to the new view controller.
-            let detailViewController = segue.destinationViewController as DetailViewController
+            let detailViewController = segue.destinationViewController as! DetailViewController
             detailViewController.book = selectedBook
         }
     }

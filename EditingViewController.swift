@@ -96,7 +96,7 @@ class EditingViewController : UIViewController {
             
             self.textField.hidden = true
             self.datePicker.hidden = false
-            var date = self.editedObject?.valueForKey(self.editedFieldKey!) as NSDate?
+            var date = self.editedObject?.valueForKey(self.editedFieldKey!) as! NSDate?
             if date == nil {
                 date = NSDate()
             }
@@ -106,7 +106,7 @@ class EditingViewController : UIViewController {
             
             self.textField.hidden = false
             self.datePicker.hidden = true
-            self.textField.text = self.editedObject?.valueForKey(self.editedFieldKey!) as NSString?
+            self.textField.text = self.editedObject?.valueForKey(self.editedFieldKey!) as! String?
             self.textField.placeholder = self.title
             self.textField.becomeFirstResponder()
         }
@@ -152,7 +152,7 @@ class EditingViewController : UIViewController {
         }
         
         let entity = self.editedObject?.entity
-        let attribute = entity?.attributesByName[self.editedFieldKey!] as NSAttributeDescription?
+        let attribute = entity?.attributesByName[self.editedFieldKey!] as! NSAttributeDescription?
         let attributeClassName = attribute?.attributeValueClassName
         
         if attributeClassName == "NSDate" {

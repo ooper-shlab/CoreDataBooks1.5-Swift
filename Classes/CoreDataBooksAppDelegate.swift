@@ -59,7 +59,7 @@ import CoreData
 @objc(CoreDataBooksAppDelegate)
 class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     
-    var window: UIWindow!
+    var window: UIWindow?
     
     private var managedObjectModel: NSManagedObjectModel {
         return getManagedObjectModel()
@@ -76,8 +76,8 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     //MARK: - Application lifecycle
     
     func applicationDidFinishLaunching(application: UIApplication) {
-        let navigationController = self.window.rootViewController as UINavigationController
-        let rootViewController = navigationController.viewControllers[0] as RootViewController
+        let navigationController = self.window!.rootViewController as! UINavigationController
+        let rootViewController = navigationController.viewControllers[0] as! RootViewController
         rootViewController.managedObjectContext = self.managedObjectContext
     }
     
@@ -206,7 +206,7 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     
     // Returns the URL to the application's Documents directory.
     private func applicationDocumentsDirectory() -> NSURL {
-        return NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).last as NSURL
+        return NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).last as! NSURL
     }
     
 }

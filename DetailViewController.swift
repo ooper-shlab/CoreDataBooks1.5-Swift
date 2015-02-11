@@ -269,7 +269,7 @@ class DetailViewController : UITableViewController {
         
         if segue.identifier == "EditSelectedItem" {
             
-            let controller = segue.destinationViewController as EditingViewController
+            let controller = segue.destinationViewController as! EditingViewController
             let indexPath = tableView.indexPathForSelectedRow()!
             
             controller.editedObject = self.book
