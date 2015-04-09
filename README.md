@@ -2,8 +2,6 @@
 
 Translated by OOPer in cooperation with shlab.jp, on 2014/09/07-2015/02/02.
 
-Adapted to Swift 1.2 reuquirements on 2015/2/11.
-
 Based on
 <https://developer.apple.com/library/ios/samplecode/CoreDataBooks/Introduction/Intro.html#//apple_ref/doc/uid/DTS40008405>
 2014-05-08.
@@ -15,7 +13,7 @@ You should not contact to Apple or SHLab(jp) about any faults caused by my trans
 
 Build Requirements
 ------------------------------
-Xcode 6.3 beta, iOS SDK 8.3
+Xcode 6.3, iOS SDK 8.3
 
 
 Runtime Requirements
