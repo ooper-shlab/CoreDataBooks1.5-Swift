@@ -94,16 +94,19 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     }
     
     private func saveContext() {
-        var error: NSError? = nil
-        if _managedObjectContext != nil {
-            if _managedObjectContext?.hasChanges == true && !_managedObjectContext!.save(&error) {
+        if _managedObjectContext != nil && _managedObjectContext!.hasChanges {
+            do {
+                try _managedObjectContext!.save()
+            } catch let error as NSError {
                 /*
                 Replace this implementation with code to handle the error appropriately.
                 
                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 */
-                NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+                NSLog("Unresolved error %@, %@", error, error.userInfo)
                 abort()
+            } catch _ {
+                fatalError()
             }
         }
     }
@@ -162,15 +165,19 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
         if !fileManager.fileExistsAtPath(storeURL.path!) {
             let defaultStoreURL = NSBundle.mainBundle().URLForResource("CoreDataBooks", withExtension: "CDBStore")
             if defaultStoreURL != nil {
-                fileManager.copyItemAtURL(defaultStoreURL!, toURL: storeURL, error: nil)
+                do {
+                    try fileManager.copyItemAtURL(defaultStoreURL!, toURL: storeURL)
+                } catch _ {
+                }
             }
         }
         
         let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
         _persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         
-        var error: NSError?
-        if _persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeURL, options: options, error: &error) == nil {
+        do {
+            try _persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeURL, options: options)
+        } catch let error as NSError {
             /*
             Replace this implementation with code to handle the error appropriately.
             
@@ -194,7 +201,7 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
             Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
             
             */
-            NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+            NSLog("Unresolved error %@, %@", error, error.userInfo)
             abort()
         }
         
@@ -206,7 +213,7 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     
     // Returns the URL to the application's Documents directory.
     private func applicationDocumentsDirectory() -> NSURL {
-        return NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).last as! NSURL
+        return NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).last!
     }
     
 }

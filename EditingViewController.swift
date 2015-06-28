@@ -152,7 +152,7 @@ class EditingViewController : UIViewController {
         }
         
         let entity = self.editedObject?.entity
-        let attribute = entity?.attributesByName[self.editedFieldKey!] as! NSAttributeDescription?
+        let attribute = entity?.attributesByName[self.editedFieldKey!] as NSAttributeDescription?
         let attributeClassName = attribute?.attributeValueClassName
         
         if attributeClassName == "NSDate" {

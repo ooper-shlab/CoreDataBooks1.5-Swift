@@ -112,14 +112,15 @@ class DetailViewController : UITableViewController {
         } else {
             cleanUpUndoManager()
             // Save the changes.
-            var error: NSError?
-            if !self.book!.managedObjectContext!.save(&error) {
+            do {
+                try self.book!.managedObjectContext!.save()
+            } catch let error as NSError {
                 /*
                 Replace this implementation with code to handle the error appropriately.
                 
                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 */
-                NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+                NSLog("Unresolved error %@, %@", error, error.userInfo)
                 abort()
             }
         }
@@ -135,8 +136,14 @@ class DetailViewController : UITableViewController {
     
     private func updateRightBarButtonItemState() {
         
-        // Conditionally enable the right bar button item -- it should only be enabled if the book is in a valid state for saving.
-        self.navigationItem.rightBarButtonItem!.enabled = self.book!.validateForUpdate(nil)
+        do {
+            // Conditionally enable the right bar button item -- it should only be enabled if the book is in a valid state for saving.
+            try self.book!.validateForUpdate()
+            // Conditionally enable the right bar button item -- it should only be enabled if the book is in a valid state for saving.
+            self.navigationItem.rightBarButtonItem!.enabled = true
+        } catch _ {
+            self.navigationItem.rightBarButtonItem!.enabled = false
+        }
     }
     
     
@@ -189,7 +196,7 @@ class DetailViewController : UITableViewController {
         }
         
         // Register as an observer of the book's context's undo manager.
-        var bookUndoManager = self.book!.managedObjectContext?.undoManager
+        let bookUndoManager = self.book!.managedObjectContext?.undoManager
         
         let dnc = NSNotificationCenter.defaultCenter()
         dnc.addObserver(self, selector: "undoManagerDidUndo:", name: NSUndoManagerDidUndoChangeNotification, object: bookUndoManager)
@@ -270,7 +277,7 @@ class DetailViewController : UITableViewController {
         if segue.identifier == "EditSelectedItem" {
             
             let controller = segue.destinationViewController as! EditingViewController
-            let indexPath = tableView.indexPathForSelectedRow()!
+            let indexPath = tableView.indexPathForSelectedRow!
             
             controller.editedObject = self.book
             switch indexPath.row {

@@ -18,6 +18,7 @@
 		53C48ECC17B939B8000644F8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 53C48ECA17B939B8000644F8 /* Localizable.strings */; };
 		53CF14D518FDA80D004543F7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53CF14D418FDA80D004543F7 /* Images.xcassets */; };
 		D70FFCB919B9BE63004047A4 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = D70FFCB819B9BE63004047A4 /* Book.swift */; };
+		D76036F91B40327A0041DA69 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D76036F71B40327A0041DA69 /* LaunchScreen.storyboard */; };
 		D7ACA1FD19BABB260060771E /* EditingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ACA1FC19BABB260060771E /* EditingViewController.swift */; };
 		D7C4A1E519BC813B0027C34F /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4A1E119BC66D40027C34F /* DetailViewController.swift */; };
 		D7C4A1E619BC81420027C34F /* AddViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C4A1DF19BC66800027C34F /* AddViewController.swift */; };
@@ -39,6 +40,7 @@
 		53CF14D418FDA80D004543F7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CoreDataBooks/Images.xcassets; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 		D70FFCB819B9BE63004047A4 /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+		D76036F81B40327A0041DA69 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7662A9E1A7FA1C8007EB12F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		D7ACA1FC19BABB260060771E /* EditingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditingViewController.swift; sourceTree = "<group>"; };
 		D7C4A1DF19BC66800027C34F /* AddViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddViewController.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 				53CF14D418FDA80D004543F7 /* Images.xcassets */,
 				288C5DB5152A0CA100D11004 /* CoreDataBooks.CDBStore */,
 				285CE399141C130C0083AF09 /* MainStoryboard.storyboard */,
+				D76036F71B40327A0041DA69 /* LaunchScreen.storyboard */,
 				2858AAB41528CA9400A1E836 /* CoreDataBooks.xcdatamodeld */,
 				53C48ECA17B939B8000644F8 /* Localizable.strings */,
 			);
@@ -171,7 +174,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "CoreDataBooks" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -201,6 +205,7 @@
 				288F3A520F6736BA00C86E86 /* ReadMe.txt in Resources */,
 				285CE39B141C130C0083AF09 /* MainStoryboard.storyboard in Resources */,
 				288C5DB6152A0CA100D11004 /* CoreDataBooks.CDBStore in Resources */,
+				D76036F91B40327A0041DA69 /* LaunchScreen.storyboard in Resources */,
 				53CF14D518FDA80D004543F7 /* Images.xcassets in Resources */,
 				53C48ECC17B939B8000644F8 /* Localizable.strings in Resources */,
 			);
@@ -242,6 +247,14 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
+		D76036F71B40327A0041DA69 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D76036F81B40327A0041DA69 /* en */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -260,8 +273,9 @@
 				GCC_PREFIX_HEADER = CoreDataBooks_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CoreDataBooks;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -280,8 +294,9 @@
 				GCC_PREFIX_HEADER = CoreDataBooks_Prefix.pch;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = CoreDataBooks;
 			};
 			name = Release;
@@ -290,6 +305,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

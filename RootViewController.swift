@@ -90,14 +90,15 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
         // Set up the edit and add buttons.
         self.navigationItem.leftBarButtonItem = self.editButtonItem()
         
-        var error: NSError?
-        if !self.fetchedResultsController.performFetch(&error) {
+        do {
+            try self.fetchedResultsController.performFetch()
+        } catch let error as NSError {
             /*
             Replace this implementation with code to handle the error appropriately.
             
             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             */
-            NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+            NSLog("Unresolved error %@, %@", error, error.userInfo)
             abort()
         }
     }
@@ -114,7 +115,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     // Customize the number of rows in the table view.
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        let sectionInfo = self.fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
+        let sectionInfo = self.fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
         return sectionInfo.numberOfObjects
     }
     
@@ -129,7 +130,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let CellIdentifier = "Cell"
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as! UITableViewCell?
+        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as UITableViewCell?
         
         // Configure the cell.
         configureCell(cell!, atIndexPath: indexPath)
@@ -148,16 +149,17 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             
             // Delete the managed object.
             let context = self.fetchedResultsController.managedObjectContext
-            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as NSManagedObject)
             
-            var error: NSError?
-            if !context.save(&error) {
+            do {
+                try context.save()
+            } catch let error as NSError {
                 /*
                 Replace this implementation with code to handle the error appropriately.
                 
                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 */
-                NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+                NSLog("Unresolved error %@, %@", error, error.userInfo)
                 abort()
             }
         }
@@ -223,7 +225,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
         self.tableView!.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: NSManagedObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
         let tableView = self.tableView
         
@@ -291,7 +293,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             
         } else if segue.identifier == "ShowSelectedBook" {
             
-            let indexPath = self.tableView.indexPathForSelectedRow()
+            let indexPath = self.tableView.indexPathForSelectedRow
             let selectedBook = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Book
             
             // Pass the selected book to the new view controller.
@@ -313,25 +315,28 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             The new book is associated with the add controller's managed object context.
             This means that any edits that are made don't affect the application's main managed object context -- it's a way of keeping disjoint edits in a separate scratchpad. Saving changes to that context, though, only push changes to the fetched results controller's context. To save the changes to the persistent store, you have to save the fetch results controller's context as well.
             */
-            var error: NSError?
             let addingManagedObjectContext = controller.managedObjectContext
-            if !addingManagedObjectContext!.save(&error) {
+            do {
+                try addingManagedObjectContext!.save()
+            } catch let error as NSError {
                 /*
                 Replace this implementation with code to handle the error appropriately.
                 
                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 */
-                NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+                NSLog("Unresolved error %@, %@", error, error.userInfo)
                 abort()
             }
             
-            if !self.fetchedResultsController.managedObjectContext.save(&error) {
+            do {
+                try self.fetchedResultsController.managedObjectContext.save()
+            } catch let error as NSError {
                 /*
                 Replace this implementation with code to handle the error appropriately.
                 
                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 */
-                NSLog("Unresolved error %@, %@", error!, error!.userInfo!)
+                NSLog("Unresolved error %@, %@", error, error.userInfo)
                 abort()
             }
         }
