@@ -149,7 +149,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             
             // Delete the managed object.
             let context = self.fetchedResultsController.managedObjectContext
-            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as NSManagedObject)
+            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
             
             do {
                 try context.save()
@@ -225,7 +225,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
         self.tableView!.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: NSManagedObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         
         let tableView = self.tableView
         
