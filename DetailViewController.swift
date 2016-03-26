@@ -80,7 +80,7 @@ class DetailViewController : UITableViewController {
         // if the local changes behind our back, we need to be notified so we can update the date
         // format in the table view cells
         //
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "localeChanged:", name: NSCurrentLocaleDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailViewController.localeChanged(_:)), name: NSCurrentLocaleDidChangeNotification, object: nil)
     }
     
     deinit {
@@ -199,8 +199,8 @@ class DetailViewController : UITableViewController {
         let bookUndoManager = self.book!.managedObjectContext?.undoManager
         
         let dnc = NSNotificationCenter.defaultCenter()
-        dnc.addObserver(self, selector: "undoManagerDidUndo:", name: NSUndoManagerDidUndoChangeNotification, object: bookUndoManager)
-        dnc.addObserver(self, selector: "undoManagerDidRedo:", name: NSUndoManagerDidRedoChangeNotification, object: bookUndoManager)
+        dnc.addObserver(self, selector: #selector(DetailViewController.undoManagerDidUndo(_:)), name: NSUndoManagerDidUndoChangeNotification, object: bookUndoManager)
+        dnc.addObserver(self, selector: #selector(DetailViewController.undoManagerDidRedo(_:)), name: NSUndoManagerDidRedoChangeNotification, object: bookUndoManager)
     }
     
     func cleanUpUndoManager() {
