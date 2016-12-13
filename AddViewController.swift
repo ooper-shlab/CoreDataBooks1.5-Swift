@@ -61,7 +61,7 @@ import CoreData
 
 @objc(AddViewControllerDelegate)
 protocol AddViewControllerDelegate {
-    func addViewController(controller: AddViewController, didFinishWithSave save: Bool)
+    func add(_ controller: AddViewController, didFinishWithSave save: Bool)
 }
 
 
@@ -75,17 +75,17 @@ class AddViewController: DetailViewController {
         
         // Set up the undo manager and set editing state to YES.
         setUpUndoManager()
-        self.editing = true
+        self.isEditing = true
     }
     
     
     @IBAction func cancel(sender: AnyObject) {
-        self.delegate?.addViewController(self, didFinishWithSave: false)
+        self.delegate?.add(self, didFinishWithSave: false)
     }
     
     
     @IBAction func save(sender: AnyObject) {
-        self.delegate?.addViewController(self, didFinishWithSave: true)
+        self.delegate?.add(self, didFinishWithSave: true)
     }
     
     deinit {

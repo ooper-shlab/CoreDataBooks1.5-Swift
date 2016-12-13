@@ -88,25 +88,25 @@ class EditingViewController : UIViewController {
     }
     
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Configure the user interface according to state.
         if self.editingDate {
             
-            self.textField.hidden = true
-            self.datePicker.hidden = false
-            var date = self.editedObject?.valueForKey(self.editedFieldKey!) as! NSDate?
+            self.textField.isHidden = true
+            self.datePicker.isHidden = false
+            var date = self.editedObject?.value(forKey: self.editedFieldKey!) as! Date?
             if date == nil {
-                date = NSDate()
+                date = Date()
             }
             self.datePicker.date = date!
             
         } else {
             
-            self.textField.hidden = false
-            self.datePicker.hidden = true
-            self.textField.text = self.editedObject?.valueForKey(self.editedFieldKey!) as! String?
+            self.textField.isHidden = false
+            self.datePicker.isHidden = true
+            self.textField.text = self.editedObject?.value(forKey: self.editedFieldKey!) as! String?
             self.textField.placeholder = self.title
             self.textField.becomeFirstResponder()
         }
@@ -115,7 +115,7 @@ class EditingViewController : UIViewController {
     
     //MARK: - Save and cancel operations
     
-    @IBAction func save(sender: AnyObject) {
+    @IBAction func save(_ sender: AnyObject) {
         // Set the action name for the undo operation.
         let undoManager = self.editedObject?.managedObjectContext?.undoManager
         undoManager?.setActionName(self.editedFieldName!)
@@ -127,19 +127,19 @@ class EditingViewController : UIViewController {
             self.editedObject?.setValue(self.textField.text, forKey: self.editedFieldKey!)
         }
         
-        self.navigationController?.popViewControllerAnimated(true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     
-    @IBAction func cancel(sender: AnyObject) {
+    @IBAction func cancel(_ sender: AnyObject) {
         // Don't pass current value to the edited object, just pop.
-        self.navigationController?.popViewControllerAnimated(true)
+        _ = self.navigationController?.popViewController(animated: true)
     }
     
     
     //MARK: - Manage whether editing a date
     
-    private func didSetEditedFieldKey(oldValue: String?) {
+    private func didSetEditedFieldKey(_ oldValue: String?) {
         if oldValue != editedFieldKey {
             _hasDeterminedWhetherEditingDate = false
         }

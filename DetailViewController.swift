@@ -71,8 +71,8 @@ class DetailViewController : UITableViewController {
         
         super.viewDidLoad()
         
-        if self.dynamicType === DetailViewController.self {
-            self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        if type(of: self) === DetailViewController.self {
+            self.navigationItem.rightBarButtonItem = self.editButtonItem
         }
         
         self.tableView.allowsSelectionDuringEditing = true
@@ -80,14 +80,14 @@ class DetailViewController : UITableViewController {
         // if the local changes behind our back, we need to be notified so we can update the date
         // format in the table view cells
         //
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(DetailViewController.localeChanged(_:)), name: NSCurrentLocaleDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(DetailViewController.localeChanged(_:)), name: NSLocale.currentLocaleDidChangeNotification, object: nil)
     }
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: NSCurrentLocaleDidChangeNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSLocale.currentLocaleDidChangeNotification, object: nil)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
         super.viewWillAppear(animated)
         
@@ -96,7 +96,7 @@ class DetailViewController : UITableViewController {
         self.updateRightBarButtonItemState()
     }
     
-    override func setEditing(editing: Bool, animated: Bool) {
+    override func setEditing(_ editing: Bool, animated: Bool) {
         
         super.setEditing(editing, animated: animated)
         
@@ -130,8 +130,8 @@ class DetailViewController : UITableViewController {
         
         self.authorLabel!.text = self.book!.author
         self.titleLabel!.text = self.book!.title
-        let copyright: NSDate? = self.book!.copyright
-        self.copyrightLabel!.text = copyright != nil ? self.dateFormatter.stringFromDate(copyright!) : nil
+        let copyright: Date? = self.book!.copyright as Date
+        self.copyrightLabel!.text = copyright != nil ? self.dateFormatter.string(from: copyright!) : nil
     }
     
     private func updateRightBarButtonItemState() {
@@ -140,19 +140,19 @@ class DetailViewController : UITableViewController {
             // Conditionally enable the right bar button item -- it should only be enabled if the book is in a valid state for saving.
             try self.book!.validateForUpdate()
             // Conditionally enable the right bar button item -- it should only be enabled if the book is in a valid state for saving.
-            self.navigationItem.rightBarButtonItem!.enabled = true
+            self.navigationItem.rightBarButtonItem!.isEnabled = true
         } catch _ {
-            self.navigationItem.rightBarButtonItem!.enabled = false
+            self.navigationItem.rightBarButtonItem!.isEnabled = false
         }
     }
     
     
     //MARK: - UITableViewDelegate
     
-    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         
         // Only allow selection if editing.
-        if self.editing {
+        if self.isEditing {
             return indexPath
         }
         return nil
@@ -161,19 +161,19 @@ class DetailViewController : UITableViewController {
     /*
     Manage row selection: If a row is selected, create a new editing view controller to edit the property associated with the selected row.
     */
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if self.editing {
-            performSegueWithIdentifier("EditSelectedItem", sender: self)
+        if self.isEditing {
+            performSegue(withIdentifier: "EditSelectedItem", sender: self)
         }
     }
     
-    override func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         
-        return .None
+        return .none
     }
     
-    override func tableView(tableView: UITableView, shouldIndentWhileEditingRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         
         return false
     }
@@ -190,7 +190,7 @@ class DetailViewController : UITableViewController {
         */
         if self.book!.managedObjectContext?.undoManager == nil {
             
-            let anUndoManager = NSUndoManager()
+            let anUndoManager = UndoManager()
             anUndoManager.levelsOfUndo = 3
             self.book!.managedObjectContext?.undoManager = anUndoManager
         }
@@ -198,9 +198,9 @@ class DetailViewController : UITableViewController {
         // Register as an observer of the book's context's undo manager.
         let bookUndoManager = self.book!.managedObjectContext?.undoManager
         
-        let dnc = NSNotificationCenter.defaultCenter()
-        dnc.addObserver(self, selector: #selector(DetailViewController.undoManagerDidUndo(_:)), name: NSUndoManagerDidUndoChangeNotification, object: bookUndoManager)
-        dnc.addObserver(self, selector: #selector(DetailViewController.undoManagerDidRedo(_:)), name: NSUndoManagerDidRedoChangeNotification, object: bookUndoManager)
+        let dnc = NotificationCenter.default
+        dnc.addObserver(self, selector: #selector(DetailViewController.undoManagerDidUndo(_:)), name: NSNotification.Name.NSUndoManagerDidUndoChange, object: bookUndoManager)
+        dnc.addObserver(self, selector: #selector(DetailViewController.undoManagerDidRedo(_:)), name: NSNotification.Name.NSUndoManagerDidRedoChange, object: bookUndoManager)
     }
     
     func cleanUpUndoManager() {
@@ -208,25 +208,25 @@ class DetailViewController : UITableViewController {
         // Remove self as an observer.
         let bookUndoManager = self.book!.managedObjectContext?.undoManager
         
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: NSUndoManagerDidUndoChangeNotification, object: bookUndoManager)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: NSUndoManagerDidRedoChangeNotification, object: bookUndoManager)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.NSUndoManagerDidUndoChange, object: bookUndoManager)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.NSUndoManagerDidRedoChange, object: bookUndoManager)
         
         self.book!.managedObjectContext?.undoManager = nil
     }
     
-    private var undoMnager: NSUndoManager? {
+    private var undoMnager: UndoManager? {
         
         return self.book?.managedObjectContext?.undoManager
     }
     
-    func undoManagerDidUndo(notification: NSNotification) {
+    func undoManagerDidUndo(_ notification: NSNotification) {
         
         // Redisplay the data.
         updateInterface()
         updateRightBarButtonItemState()
     }
     
-    func undoManagerDidRedo(notification: NSNotification) {
+    func undoManagerDidRedo(_ notification: NSNotification) {
         
         // Redisplay the data.
         updateInterface()
@@ -236,18 +236,18 @@ class DetailViewController : UITableViewController {
     /*
     The view controller must be first responder in order to be able to receive shake events for undo. It should resign first responder status when it disappears.
     */
-    override func canBecomeFirstResponder() -> Bool {
+    override var canBecomeFirstResponder: Bool {
         
         return true
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         
         super.viewDidAppear(animated)
         becomeFirstResponder()
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         
         super.viewWillDisappear(animated)
         resignFirstResponder()
@@ -256,13 +256,13 @@ class DetailViewController : UITableViewController {
     
     //MARK: - Date Formatter
     
-    var dateFormatter: NSDateFormatter {
+    var dateFormatter: DateFormatter {
         
         struct My {
-            static let dateFormatter: NSDateFormatter = {
-                var formatter = NSDateFormatter()
-                formatter.dateStyle = .MediumStyle
-                formatter.timeStyle = .NoStyle
+            static let dateFormatter: DateFormatter = {
+                var formatter = DateFormatter()
+                formatter.dateStyle = .medium
+                formatter.timeStyle = .none
                 return formatter
                 }()
         }
@@ -272,11 +272,11 @@ class DetailViewController : UITableViewController {
     
     //MARK: - Segue management
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "EditSelectedItem" {
             
-            let controller = segue.destinationViewController as! EditingViewController
+            let controller = segue.destination as! EditingViewController
             let indexPath = tableView.indexPathForSelectedRow!
             
             controller.editedObject = self.book
@@ -299,7 +299,7 @@ class DetailViewController : UITableViewController {
     
     //MARK: - Locale changes
     
-    func localeChanged(notif: NSNotification) {
+    func localeChanged(_ notif: NSNotification) {
         // the user changed the locale (region format) in Settings, so we are notified here to
         // update the date format in the table view cells
         //

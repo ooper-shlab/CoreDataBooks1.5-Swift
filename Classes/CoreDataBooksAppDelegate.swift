@@ -75,21 +75,21 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     //MARK: -
     //MARK: - Application lifecycle
     
-    func applicationDidFinishLaunching(application: UIApplication) {
+    func applicationDidFinishLaunching(_ application: UIApplication) {
         let navigationController = self.window!.rootViewController as! UINavigationController
         let rootViewController = navigationController.viewControllers[0] as! RootViewController
         rootViewController.managedObjectContext = self.managedObjectContext
     }
     
-    func applicationWillTerminalte(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         self.saveContext()
     }
     
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         self.saveContext()
     }
     
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         self.saveContext()
     }
     
@@ -126,7 +126,7 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
         
         let coordinator = self.persistentStoreCoordinator
         if coordinator != nil {
-            _managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+            _managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             _managedObjectContext!.persistentStoreCoordinator = coordinator
         }
         return _managedObjectContext!
@@ -139,8 +139,8 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
         if _managedObjectModel != nil {
             return _managedObjectModel!
         }
-        let modelURL = NSBundle.mainBundle().URLForResource("CoreDataBooks", withExtension: "momd")!
-        _managedObjectModel = NSManagedObjectModel(contentsOfURL: modelURL)
+        let modelURL = Bundle.main.url(forResource: "CoreDataBooks", withExtension: "momd")!
+        _managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
         return _managedObjectModel!
     }
     
@@ -154,19 +154,19 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
             return _persistentStoreCoordinator!
         }
         
-        let storeURL = applicationDocumentsDirectory().URLByAppendingPathComponent("CoreDataBooks.CDBStore")
+        let storeURL = applicationDocumentsDirectory().appendingPathComponent("CoreDataBooks.CDBStore")
         
         /*
         Set up the store.
         For the sake of illustration, provide a pre-populated default store.
         */
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
         // If the expected store doesn't exist, copy the default store.
-        if !fileManager.fileExistsAtPath(storeURL.path!) {
-            let defaultStoreURL = NSBundle.mainBundle().URLForResource("CoreDataBooks", withExtension: "CDBStore")
+        if !fileManager.fileExists(atPath: storeURL.path) {
+            let defaultStoreURL = Bundle.main.url(forResource: "CoreDataBooks", withExtension: "CDBStore")
             if defaultStoreURL != nil {
                 do {
-                    try fileManager.copyItemAtURL(defaultStoreURL!, toURL: storeURL)
+                    try fileManager.copyItem(at: defaultStoreURL!, to: storeURL)
                 } catch _ {
                 }
             }
@@ -176,7 +176,7 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
         _persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         
         do {
-            try _persistentStoreCoordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: storeURL, options: options)
+            try _persistentStoreCoordinator!.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeURL, options: options)
         } catch let error as NSError {
             /*
             Replace this implementation with code to handle the error appropriately.
@@ -212,8 +212,8 @@ class CoreDataBooksAppDelegate:  NSObject, UIApplicationDelegate {
     //MARK: - Application's documents directory
     
     // Returns the URL to the application's Documents directory.
-    private func applicationDocumentsDirectory() -> NSURL {
-        return NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask).last!
+    private func applicationDocumentsDirectory() -> URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
     }
     
 }

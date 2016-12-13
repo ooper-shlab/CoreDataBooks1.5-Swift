@@ -68,8 +68,8 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     
     var managedObjectContext: NSManagedObjectContext?
     
-    private var _fetchedResultsController: NSFetchedResultsController?
-    private var fetchedResultsController: NSFetchedResultsController {
+    private var _fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
+    private var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult> {
         get {
             return getFetchedResultsController()
         }
@@ -88,7 +88,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
         super.viewDidLoad()
         
         // Set up the edit and add buttons.
-        self.navigationItem.leftBarButtonItem = self.editButtonItem()
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
         
         do {
             try self.fetchedResultsController.performFetch()
@@ -107,49 +107,49 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     //MARK: - Table view data source methods
     
     // The data source methods are handled primarily by the fetch results controller
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         
         return self.fetchedResultsController.sections!.count
     }
     
     // Customize the number of rows in the table view.
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         let sectionInfo = self.fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
         return sectionInfo.numberOfObjects
     }
     
     // Customize the appearance of table view cells.
-    private func configureCell(cell: UITableViewCell, atIndexPath indexPath: NSIndexPath) {
+    private func configure(_ cell: UITableViewCell, at indexPath: IndexPath) {
         
         // Configure the cell to show the book's title
-        let book = self.fetchedResultsController.objectAtIndexPath(indexPath) as! Book
+        let book = self.fetchedResultsController.object(at: indexPath) as! Book
         cell.textLabel?.text = book.title
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let CellIdentifier = "Cell"
-        let cell = tableView.dequeueReusableCellWithIdentifier(CellIdentifier) as UITableViewCell?
+        let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier) as UITableViewCell?
         
         // Configure the cell.
-        configureCell(cell!, atIndexPath: indexPath)
+        configure(cell!, at: indexPath)
         return cell!
     }
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
         // Display the authors' names as section headings.
         return self.fetchedResultsController.sections![section].name
     }
     
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         
-        if editingStyle == .Delete {
+        if editingStyle == .delete {
             
             // Delete the managed object.
             let context = self.fetchedResultsController.managedObjectContext
-            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            context.delete(self.fetchedResultsController.object(at: indexPath) as! NSManagedObject)
             
             do {
                 try context.save()
@@ -168,13 +168,13 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     
     //MARK: - Table view editing
     
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         
         // The table view should not be re-orderable.
         return false
     }
     
-    override func setEditing(editing: Bool, animated: Bool) {
+    override func setEditing(_ editing: Bool, animated: Bool) {
         
         super.setEditing(editing, animated: animated)
         
@@ -192,15 +192,15 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     /*
     Returns the fetched results controller. Creates and configures the controller if necessary.
     */
-    private func getFetchedResultsController() -> NSFetchedResultsController {
+    private func getFetchedResultsController() -> NSFetchedResultsController<NSFetchRequestResult> {
         
         if _fetchedResultsController != nil {
             return _fetchedResultsController!
         }
         
         // Create and configure a fetch request with the Book entity.
-        let fetchRequest = NSFetchRequest()
-        let entity = NSEntityDescription.entityForName("Book", inManagedObjectContext: self.managedObjectContext!)
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+        let entity = NSEntityDescription.entity(forEntityName: "Book", in: self.managedObjectContext!)
         fetchRequest.entity = entity
         
         // Create the sort descriptors array.
@@ -219,47 +219,47 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     /*
     NSFetchedResultsController delegate methods to respond to additions, removals and so on.
     */
-    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
         // The fetch controller is about to start sending change notifications, so prepare the table view for updates.
         self.tableView!.beginUpdates()
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         let tableView = self.tableView
         
         switch type {
             
-        case .Insert:
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+        case .insert:
+            tableView?.insertRows(at: [newIndexPath!], with: .automatic)
             
-        case .Delete:
-            tableView.deleteRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+        case .delete:
+            tableView?.deleteRows(at: [newIndexPath!], with: .automatic)
             
-        case .Update:
-            configureCell(tableView.cellForRowAtIndexPath(indexPath!)!, atIndexPath: indexPath!)
+        case .update:
+            configure(tableView!.cellForRow(at: indexPath!)!, at: indexPath!)
             
-        case .Move:
-            tableView.deleteRowsAtIndexPaths([indexPath!], withRowAnimation: .Automatic)
-            tableView.insertRowsAtIndexPaths([newIndexPath!], withRowAnimation: .Automatic)
+        case .move:
+            tableView?.deleteRows(at: [indexPath!], with: .automatic)
+            tableView?.insertRows(at: [newIndexPath!], with: .automatic)
         }
     }
     
-    func controller(controller: NSFetchedResultsController, didChangeSection sectionInfo: NSFetchedResultsSectionInfo, atIndex sectionIndex: Int, forChangeType type: NSFetchedResultsChangeType) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         switch type {
             
-        case .Insert:
-            tableView.insertSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Automatic)
+        case .insert:
+            tableView.insertSections(IndexSet(integer: sectionIndex), with: .automatic)
             
-        case .Delete:
-            tableView.deleteSections(NSIndexSet(index: sectionIndex), withRowAnimation: .Automatic)
+        case .delete:
+            tableView.deleteSections(IndexSet(integer: sectionIndex), with: .automatic)
         default:
             break
         }
     }
     
-    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
         // The fetch controller has sent all current change notifications, so tell the table view to process all updates.
         self.tableView.endUpdates()
@@ -268,7 +268,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     
     //MARK: - Segue management
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "AddBook" {
             
@@ -279,25 +279,25 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             IMPORTANT: It's not necessary to use a second context for this. You could just use the existing context, which would simplify some of the code -- you wouldn't need to perform two saves, for example. This implementation, though, illustrates a pattern that may sometimes be useful (where you want to maintain a separate set of edits).
             */
             
-            let navController = segue.destinationViewController as! UINavigationController
+            let navController = segue.destination as! UINavigationController
             let addViewController = navController.topViewController as! AddViewController
             addViewController.delegate = self
             
             // Create a new managed object context for the new book; set its parent to the fetched results controller's context.
-            let addingContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-            addingContext.parentContext = self.fetchedResultsController.managedObjectContext
+            let addingContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            addingContext.parent = self.fetchedResultsController.managedObjectContext
             
-            let newBook = NSEntityDescription.insertNewObjectForEntityForName("Book", inManagedObjectContext: addingContext) as! Book
+            let newBook = NSEntityDescription.insertNewObject(forEntityName: "Book", into: addingContext) as! Book
             addViewController.book = newBook
             addViewController.managedObjectContext = addingContext
             
         } else if segue.identifier == "ShowSelectedBook" {
             
             let indexPath = self.tableView.indexPathForSelectedRow
-            let selectedBook = self.fetchedResultsController.objectAtIndexPath(indexPath!) as! Book
+            let selectedBook = self.fetchedResultsController.object(at: indexPath!) as! Book
             
             // Pass the selected book to the new view controller.
-            let detailViewController = segue.destinationViewController as! DetailViewController
+            let detailViewController = segue.destination as! DetailViewController
             detailViewController.book = selectedBook
         }
     }
@@ -308,7 +308,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
     /*
     Add controller's delegate method; informs the delegate that the add operation has completed, and indicates whether the user saved the new book.
     */
-    func addViewController(controller: AddViewController, didFinishWithSave save: Bool) {
+    func add(_ controller: AddViewController, didFinishWithSave save: Bool) {
         
         if save {
             /*
@@ -342,7 +342,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
         }
         
         // Dismiss the modal view to return to the main list
-        dismissViewControllerAnimated(true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
     
 }
