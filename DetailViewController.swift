@@ -219,14 +219,14 @@ class DetailViewController : UITableViewController {
         return self.book?.managedObjectContext?.undoManager
     }
     
-    func undoManagerDidUndo(_ notification: NSNotification) {
+    @objc func undoManagerDidUndo(_ notification: NSNotification) {
         
         // Redisplay the data.
         updateInterface()
         updateRightBarButtonItemState()
     }
     
-    func undoManagerDidRedo(_ notification: NSNotification) {
+    @objc func undoManagerDidRedo(_ notification: NSNotification) {
         
         // Redisplay the data.
         updateInterface()
@@ -299,7 +299,7 @@ class DetailViewController : UITableViewController {
     
     //MARK: - Locale changes
     
-    func localeChanged(_ notif: NSNotification) {
+    @objc func localeChanged(_ notif: NSNotification) {
         // the user changed the locale (region format) in Settings, so we are notified here to
         // update the date format in the table view cells
         //
