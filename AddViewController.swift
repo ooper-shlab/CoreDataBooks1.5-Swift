@@ -79,12 +79,12 @@ class AddViewController: DetailViewController {
     }
     
     
-    @IBAction func cancel(sender: AnyObject) {
+    @IBAction func cancel(_ sender: AnyObject) {
         self.delegate?.add(self, didFinishWithSave: false)
     }
     
     
-    @IBAction func save(sender: AnyObject) {
+    @IBAction func save(_ sender: AnyObject) {
         self.delegate?.add(self, didFinishWithSave: true)
     }
     

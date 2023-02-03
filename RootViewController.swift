@@ -235,7 +235,7 @@ class RootViewController:  UITableViewController, NSFetchedResultsControllerDele
             tableView?.insertRows(at: [newIndexPath!], with: .automatic)
             
         case .delete:
-            tableView?.deleteRows(at: [newIndexPath!], with: .automatic)
+            tableView?.deleteRows(at: [indexPath!], with: .automatic)
             
         case .update:
             configure(tableView!.cellForRow(at: indexPath!)!, at: indexPath!)
